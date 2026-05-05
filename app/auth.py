@@ -1,0 +1,34 @@
+from datetime import datetime, timedelta, timezone
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from fastapi import requests, HTTPException, status
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SECRET_KEY= os.getenv("SECRET_KEY")
+
+ALGORITHM = os.getenv("ALGORITHM")
+
+ACESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACESS_TOKEN_EXPIRE_MINUTES")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_senha(senha:str):
+    return pwd_context.hash(senha)
+
+def verificar_senha(senha:str, senha_hash:str):
+    return pwd_context.verify(senha, senha_hash)
+
+def criar_token(data:dict):
+    payload = data.copy()
+    expira = datetime.now(timezone.utc) + timedelta(minutes=ACESS_TOKEN_EXPIRE_MINUTES)
+    payload.update({"exp": expira})
+
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    return token
+
+def decodificar_token(token:str)
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    return payload
