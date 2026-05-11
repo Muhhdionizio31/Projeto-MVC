@@ -29,7 +29,7 @@ def criar_token(data:dict):
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
-def decodificar_token(token:str)
+def decodificar_token(token:str):
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     return payload
 
@@ -56,3 +56,9 @@ def get_usuario_logado(request: Request):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token Inválido ou expirado"
             )
+    
+def get_usuario_opcional(request: Request):
+    try: 
+        return get_usuario_logado(request)
+    except HTTPException:
+        return None
